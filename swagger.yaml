@@ -1,51 +1,97 @@
 swagger: '2.0'
 info:
   version: '1.0.0'
-  title: 'My Application API'
-  description: 'API documentation for My Application'
-basePath: '/api'
+  title: Sample Post API
+  description: CRUD operations for managing posts
+basePath: /api
+tags:
+  - name: Posts
+    description: Operations related to posts
 paths:
-  /users:
+  /posts:
     post:
-      summary: Create a new user
-      description: Endpoint to register a new user
+      tags:
+        - Posts
+      summary: Create a new post
       parameters:
-        - name: user
+        - name: body
           in: body
-          description: User object
+          description: Post object
           required: true
           schema:
-            type: object
-            properties:
-              username:
-                type: string
-              email:
-                type: string
-              password:
-                type: string
+            $ref: '#/definitions/Post'
       responses:
         '201':
-          description: User created successfully
-        '400':
-          description: Bad request
-  /users/login:
-    post:
-      summary: User login
-      description: Endpoint for user authentication
-      parameters:
-        - name: credentials
-          in: body
-          description: User credentials
-          required: true
+          description: Created
           schema:
-            type: object
-            properties:
-              email:
-                type: string
-              password:
-                type: string
+            $ref: '#/definitions/Post'
+  /posts/{postId}:
+    get:
+      tags:
+        - Posts
+      summary: Get a post by ID
+      parameters:
+        - name: postId
+          in: path
+          description: ID of the post to retrieve
+          required: true
+          type: string
       responses:
         '200':
-          description: User authenticated successfully
-        '401':
-          description: Unauthorized
+          description: OK
+          schema:
+            $ref: '#/definitions/Post'
+    put:
+      tags:
+        - Posts
+      summary: Update a post by ID
+      parameters:
+        - name: postId
+          in: path
+          description: ID of the post to update
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: Updated post object
+          required: true
+          schema:
+            $ref: '#/definitions/Post'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Post'
+    delete:
+      tags:
+        - Posts
+      summary: Delete a post by ID
+      parameters:
+        - name: postId
+          in: path
+          description: ID of the post to delete
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+definitions:
+  Post:
+    type: object
+    properties:
+      _id:
+        type: string
+      title:
+        type: string
+      body:
+        type: string
+      author:
+        type: string
+      authorId:
+        type: string
+      lastModification:
+        type: string
+        format: date-time
+      __v:
+        type: integer
+

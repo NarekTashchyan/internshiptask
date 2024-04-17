@@ -5,6 +5,8 @@ const UserService = require('../service/userService');
 
 exports.registerUser = async (req, res) => {
     try {
+        console.log("jdgsj");
+        console.log(req.body);
         const userData = req.body;
         const newUser = await AuthService.registerUser(userData);
         res.status(201).json(newUser);

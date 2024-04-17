@@ -6,6 +6,7 @@ const CustomError = require('../utils/customError');
 
 exports.createUser = async (req, res) => {
     try {
+        console.log(req.body);
         const { username, email, password } = req.body;
         const newUser = new User({
             username,

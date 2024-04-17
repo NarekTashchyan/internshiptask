@@ -6,9 +6,14 @@ const postRoutes = require('./routes/postRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATABASE_URL = "mongodb://localhost:27017/internship";
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger.yaml');
+
+app.use(express.json());
 app.use('/auth', authRoutes);
 app.use('/post', postRoutes);
-app.use(express.json());
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(function (err, req, res, next) {
     if (err instanceof ValidationError) {
         return res.status(err.statusCode).json(err)

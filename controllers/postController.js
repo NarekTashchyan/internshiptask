@@ -23,8 +23,8 @@ exports.getPostById = async (req, res) => {
 
 exports.updatePost = async (req, res) => {
   try {
-    const postId = req.params.postId;
-    const updatedPost = await PostService.updatePost(postId, req.body);
+    const id = req.body.postId;
+    const updatedPost = await PostService.updatePost(id, req.body);
     res.json(updatedPost);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -33,7 +33,7 @@ exports.updatePost = async (req, res) => {
 
 exports.deletePost = async (req, res) => {
   try {
-    const postId = req.params.postId;
+    const postId = req.body.id;
     const result = await PostService.deletePost(postId);
     res.status(200).json(result);
   } catch (error) {
@@ -41,34 +41,20 @@ exports.deletePost = async (req, res) => {
   }
 };
 
-exports.updatePost = async (req, res) => {
-    try {
-        const post = await PostService.getPostById(req.body._id);
-        const updatedData = req.body;
-        const updatedPost = await PostService.updatePost(updatedData);
-
-        res.status(200).json({message: 'Post updated successfully'});
-    } catch (error) {
-        console.error('Error updating post:', error.message);
-        res.status(500).json({ success: false, message: 'Failed to update post', error: error.message });
-    }
-};
-
 exports.readPost = async (req, res) => {
-    try{
-        const post = await PostService.readPost(req.body.id);
-        if (!post) {
-            res.json({
-                message: "Post not found",
-            });
-        }
-        res.status(200).json({
-            author: post.author,
-            title: post.title,
-            content: post.body,
-        });
+  try {
+    const post = await PostService.readPost(req.body.id);
+    if (!post) {
+      res.json({
+        message: "Post not found",
+      });
     }
-    catch(err){
-        return res.status(404).json("Post not Found")
-    }
+    res.status(200).json({
+      author: post.author,
+      title: post.title,
+      content: post.body,
+    });
+  } catch (err) {
+    return res.status(404).json("Post not Found");
+  }
 };

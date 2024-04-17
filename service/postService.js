@@ -1,76 +1,86 @@
-// postService.js
 
 const Post = require('../models/post');
-const UserService = require('../services/userService');
-
-const PostService = {
-    async createPost(postData, userId) {
+const UserService = require('../service/userService')
+const AuthService = require('../service/authService')
+const mongoose = require('mongoose')
+const PostService = {   
+    async getPostById(id) {
         try {
-            const user = await UserService.findById(userId);
-            if (!user) {
-                throw new Error("User not found");
-            }
-            if (user.status === "loggedout") {
-                throw new Error("User is logged out");
-            }
-            
-            const post = await Post.create(postData);
+            const post = await Post.findById(id);
             return post;
-        } catch (error) {
-            console.error('Error creating post:', error.message);
-            throw error;
-        }
-    },
-
-    async getPostById(postId) {
-        try {
-            return await Post.findById(postId);
         } catch (error) {
             console.error("Error finding post by id:", error.message);
             throw error;
         }
     },
 
-    async deletePost(postId, userId) {
+    createPost: async (postData) => {
         try {
-            const user = await UserService.findById(userId);
-            if (!user) {
-                throw new Error("User not found");
-            }
-            if (user.status === "loggedout") {
-                throw new Error("User is logged out");
-            }
             
-            const result = await Post.deleteOne({ _id: postId });
-            if (result.deletedCount === 0) {
-                throw new Error("Post not found");
+            if (!mongoose.Types.ObjectId.isValid(postData.authorId)) {
+                throw new Error('Invalid user');
             }
-            return { success: true, message: "Post deleted successfully" };
+            const user = await UserService.findById(postData.authorId)
+            if (!user){
+                throw new Error("User doesnt exist")
+            }
+            postData.author = user.username
+            if (user.status == "loggedout"){
+                throw new Error("User is logged out")
+            }
+            const post = await Post.create(postData);
+            return post;
         } catch (error) {
-            console.error('Error deleting post:', error.message);
+            console.error(error.stack);
             throw error;
         }
     },
-
-    async updatePost(postId, postData, userId) {
+    async deletePost(id) {
         try {
-            const user = await UserService.findById(userId);
-            if (!user) {
-                throw new Error("User not found");
+            const result = await Post.deleteOne({ _id: id });
+            if (result.deletedCount === 0) {
+                throw new Error('Post not found');
             }
-            if (user.status === "loggedout") {
-                throw new Error("User is logged out");
+            return { success: true, message: 'Post deleted successfully' };
+        } catch (err) {
+            console.error('Error deleting post:', err.message);
+            throw err;
+        }
+    },    
+    async updatePost(data) {
+        try {
+            const post = await PostService.getPostById(data.postId);
+            console.log(post)
+            if (!post) {
+                throw new Error("Post not found");
             }
-            const result = await Post.updateOne({ _id: postId }, postData);
-            if (result.nModified === 0) {
-                throw new Error("Post not found or no changes were made");
+            if (data.hasOwnProperty('title')) {
+                post.title = data.title;
             }
-            return { success: true, message: "Post updated successfully" };
+            if (data.hasOwnProperty('content')) {
+                post.content = data.content;
+            }
+            await post.save();
+            return post;
         } catch (error) {
             console.error('Error updating post:', error.message);
-            throw error;
+            throw new Error('Failed to update post. ' + error.message);
         }
-    }
+    },
+    
+    
+    async readPost(id) {
+        try {
+            const post = PostService.getPostById(id);
+            if (!post) {
+                throw new Error("post not found")
+            }
+            return post;
+        } catch (err) {
+            console.error('Post not found:', err.message);
+            throw err;
+        }
+    },
 };
 
 module.exports = PostService;

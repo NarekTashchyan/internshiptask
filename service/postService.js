@@ -6,7 +6,6 @@ const UserService = require('../services/userService');
 const PostService = {
     async createPost(postData, userId) {
         try {
-            // Check if user is logged in
             const user = await UserService.findById(userId);
             if (!user) {
                 throw new Error("User not found");
@@ -15,7 +14,6 @@ const PostService = {
                 throw new Error("User is logged out");
             }
             
-            // Create the post
             const post = await Post.create(postData);
             return post;
         } catch (error) {
@@ -35,7 +33,6 @@ const PostService = {
 
     async deletePost(postId, userId) {
         try {
-            // Check if user is logged in
             const user = await UserService.findById(userId);
             if (!user) {
                 throw new Error("User not found");
@@ -44,7 +41,6 @@ const PostService = {
                 throw new Error("User is logged out");
             }
             
-            // Delete the post
             const result = await Post.deleteOne({ _id: postId });
             if (result.deletedCount === 0) {
                 throw new Error("Post not found");
@@ -58,7 +54,6 @@ const PostService = {
 
     async updatePost(postId, postData, userId) {
         try {
-            // Check if user is logged in
             const user = await UserService.findById(userId);
             if (!user) {
                 throw new Error("User not found");
@@ -66,8 +61,6 @@ const PostService = {
             if (user.status === "loggedout") {
                 throw new Error("User is logged out");
             }
-            
-            // Update the post
             const result = await Post.updateOne({ _id: postId }, postData);
             if (result.nModified === 0) {
                 throw new Error("Post not found or no changes were made");

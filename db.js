@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// MongoDB connection
 mongoose.connect('mongodb://localhost:27017/internship', {
     useNewUrlParser: true,
     useUnifiedTopology: true

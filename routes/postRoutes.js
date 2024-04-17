@@ -2,9 +2,8 @@
 
 const express = require('express');
 const router = express.Router();
-const postController = require('../controllers/postController'); // Import the postController module
+const postController = require('../controllers/postController');
 
-// Define routes for each operation
 router.post('/', postController.createPost);
 router.get('/read', postController.readPost);
 router.put('/update', postController.updatePost);

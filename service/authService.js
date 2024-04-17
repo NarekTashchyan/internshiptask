@@ -50,24 +50,18 @@ const AuthService = {
     try {
       const pass = data.password;
       const user = await UserService.findByEmail(data.email);
-
-      // Check if the user exists and the password is valid
       const valid = user && (await UserService.checkPassword(user, pass));
       if (!valid) {
         throw new Error("Invalid email or password");
       }
-
-      // Check if the user is already logged in
       if (user.status === "loggedin") {
         throw new Error("User is already logged in");
       }
-
-      // Update user's status to "loggedin"
       user.status = "loggedin";
       await user.save();
       return user;
     } catch (error) {
-      throw error; // Propagate the error
+      throw error;
     }
   },
 

@@ -4,7 +4,7 @@ const UserService = require('../service/userService')
 const AuthService = require('../service/authService')
 const mongoose = require('mongoose')
 const PostService = {   
-    async getPostById(id) {
+    getPostById: async (id) => {
         try {
             const post = await Post.findById(id);
             return post;
@@ -35,7 +35,8 @@ const PostService = {
             throw error;
         }
     },
-    async deletePost(id) {
+    
+    deletePost: async (id) => {
         try {
             const result = await Post.deleteOne({ _id: id });
             if (result.deletedCount === 0) {
@@ -47,7 +48,8 @@ const PostService = {
             throw err;
         }
     },    
-    async updatePost(data) {
+    
+    updatePost: async (data) => {
         try {
             const post = await PostService.getPostById(data.postId);
             console.log(post)
@@ -69,7 +71,7 @@ const PostService = {
     },
     
     
-    async readPost(id) {
+    readPost: async (id) => {
         try {
             const post = PostService.getPostById(id);
             if (!post) {
@@ -82,5 +84,6 @@ const PostService = {
         }
     },
 };
+
 
 module.exports = PostService;

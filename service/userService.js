@@ -4,7 +4,7 @@ const User = require("../models/user");
 const { deleteUser } = require("../controllers/userController");
 
 const UserService = {
-  async findById(id) {
+  findById: async (id) => {
     try {
       return await User.findOne({ _id: id });
     } catch (error) {
@@ -12,7 +12,7 @@ const UserService = {
       throw error;
     }
   },
-  async findByEmail(email) {
+  findByEmail: async (email) => {
     try {
       return await User.findOne({ email: email });
     } catch (error) {
@@ -20,16 +20,16 @@ const UserService = {
       throw error;
     }
   },
-  async findByUsername(username) {
+  findByUsername: async (username) => {
     return User.findOne({ username: username }).lean();
   },
-  async checkPassword(user, password) {
+  checkPassword: async (user, password) => {
     return bcrypt.compare(password, user.password);
   },
-  async addUser(data) {
+  addUser: async (data) => {
     try {
       const { fullName, email, password } = data;
-      const existingUser = await this.findByEmail(email);
+      const existingUser = await UserService.findByEmail(email);
       if (existingUser) {
         throw new Error("User with this email already exists");
       }
@@ -48,14 +48,14 @@ const UserService = {
       throw error;
     }
   },
-  async deleteUser(data) {
+  deleteUser: async (data) => {
     try {
       const pass = data.password;
       const user = await UserService.findByEmail(data.email);
       if (!user) {
         throw new Error("User not found");
       }
-      const valid = await this.checkPassword(user, pass);
+      const valid = await UserService.checkPassword(user, pass);
       if (!valid) {
         throw new Error("Password is incorrect");
       }
@@ -70,5 +70,6 @@ const UserService = {
     }
   }
 };
+
 
 module.exports = UserService;

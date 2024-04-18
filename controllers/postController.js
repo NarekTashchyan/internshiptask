@@ -23,8 +23,8 @@ exports.getPostById = async (req, res) => {
 
 exports.updatePost = async (req, res) => {
   try {
-    const id = req.body.postId;
-    const updatedPost = await PostService.updatePost(id, req.body);
+    console.log(req.body)
+    const updatedPost = await PostService.updatePost(req.body, req.body.Data);
     res.json(updatedPost);
   } catch (error) {
     res.status(500).json({ message: error.message });

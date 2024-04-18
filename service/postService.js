@@ -4,16 +4,19 @@ const UserService = require('../service/userService')
 const AuthService = require('../service/authService')
 const mongoose = require('mongoose')
 const PostService = {   
-    getPostById: async (id) => {
+    async getPostById(id) {
         try {
             const post = await Post.findById(id);
+            if (!post) {
+                throw new Error("Post not found");
+            }
             return post;
         } catch (error) {
             console.error("Error finding post by id:", error.message);
             throw error;
         }
     },
-
+    
     createPost: async (postData) => {
         try {
             
@@ -48,27 +51,32 @@ const PostService = {
             throw err;
         }
     },    
-    
-    updatePost: async (data) => {
+
+    async updatePost(data, updateData) {
         try {
-            const post = await PostService.getPostById(data.postId);
-            console.log(post)
+            const post = await this.getPostById(data.postId);
             if (!post) {
                 throw new Error("Post not found");
             }
-            if (data.hasOwnProperty('title')) {
-                post.title = data.title;
+            // Update post properties if provided in the updateData object
+            if (updateData.title) {
+                post.title = updateData.title;
             }
-            if (data.hasOwnProperty('content')) {
-                post.content = data.content;
+            if (updateData.body) {
+                post.body = updateData.body;
             }
-            await post.save();
-            return post;
+            // Use findByIdAndUpdate to update the post
+            const updatedPost = await Post.findByIdAndUpdate(data.postId, updateData, { new: true });
+            if (!updatedPost) {
+                throw new Error("Failed to update post");
+            }
+            return updatedPost;
         } catch (error) {
-            console.error('Error updating post:', error.message);
-            throw new Error('Failed to update post. ' + error.message);
+            console.error("Error updating post:", error.message);
+            throw error;
         }
     },
+
     
     
     readPost: async (id) => {

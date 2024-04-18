@@ -23,7 +23,6 @@ exports.getPostById = async (req, res) => {
 
 exports.updatePost = async (req, res) => {
   try {
-    console.log(req.body)
     const updatedPost = await PostService.updatePost(req.body, req.body.Data);
     res.json(updatedPost);
   } catch (error) {
